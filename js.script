@@ -1,0 +1,161 @@
+// Helpers
+const $ = (s) => document.querySelector(s);
+
+// Elements
+const todayEl          = $("#today");
+const habitForm        = $("#habitForm");
+const habitInput       = $("#habitInput");
+const habitList        = $("#habitList");
+const completeAllBtn   = $("#completeAllBtn");
+const resetDayBtn      = $("#resetDayBtn");
+const xpTotalEl        = $("#xpTotal");
+const levelEl          = $("level");
+const xpBarE1          = $("xpBar");
+const dailySummerEl    = $("DailySummaryEl");
+  
+// Date
+todayEl.textContent = new Date().toLocaleDateString(undefined, { weekday:"long", year:"numeric", day:"numeric"});
+
+const KEYS = {
+  HABITS: "questing_habits",
+  XP:     "questlog_xp_total"
+};
+
+function loadHabits(){
+  try { return JSON,parse(localStorage.getItem(KEYS.HABITS)) || []; }
+  catch { return []; }
+}
+function saveHabits(list){
+  localStorage.setItem(kEYS.HABITS, JSON.stringfy(list))
+}
+
+function loadXP(){ return Number(localStorage.getItem(KEYS.XP) || 0); }
+function saveXP(xp)
+{ localStorage.setItem(KEYS.XP, String(xp)); }
+
+function levelFromXP(xp){ return Math.floor(xp /100) + 1;}
+function updateXPUI() {
+  const xp = loadXP();
+  xpTotalEl.textContent = xp ;
+  levelEl.textContent = levelFromXP(xp);
+  xpBarEl.style.width = `${xp % 100}%`;
+}
+
+updateXPUI();
+
+
+function render(){
+  const habits = loadHabits();
+  habitList.innerHTML = "";
+  
+  habits.forEach(h => {
+    const li = document.createElement("li");  
+    li.innerHTML = `
+      <label class="name">
+        <input type="checkbox" class="toggle" data-id="{h.id}" $ {h.done ? "checked" : ""}>
+        ${h.name}
+      </label>
+      <div class="actions">
+        <button class="ghost del" type="button" data-id="${h.id}">Delete</button>
+      </div>
+    `;
+    habitList.appenChild(li);
+  });
+  
+  // Summary
+  const done = habits.filter(h => h.done).length;
+  dailySummaryEl.texContent = done === 0
+    ? "No quests completed yet."
+    : `Completed ${done} quest${done>1?"s":""} today.`;
+}
+
+render()
+
+
+habitForm.addEventListener("submit", (e)=>{
+  e,preventDefault();
+  const name = habitInput.value.trim();
+  if(!name) return;
+  
+  const habits = loadHabits();
+  habits.push({
+    id: crytpo.randomUUID ? crypto.randomUUID() : String(Date.now()),
+    name,
+    done: false
+  });
+  saveHabits(habits);
+  
+  habitInput.value = "";
+  render();
+});
+
+
+// Toggle done (+/- XP) — use CHANGE for checkboxes
+habitList.addEventListener("change", (e) => {
+  const t = e.target;
+  if (!t.classList.contains("toggle")) return;
+
+  const id = t.dataset.id;
+  const habits = loadHabits();
+  const idx = habits.findIndex(h => h.id === id);
+  if (idx === -1) return;
+
+  const wasDone = habits[idx].done;
+  habits[idx].done = t.checked;
+  saveHabits(habits);
+
+  // XP logic
+  let xp = loadXP();
+  if (!wasDone && t.checked) xp += 10;
+  if (wasDone && !t.checked) xp = Math.max(0, xp - 10);
+
+  saveXP(xp);
+  updateXPUI();
+  render();
+}); 
+
+  
+  habitList.addEventListener("click", (e) =>{
+    const t = e.target;
+    if (!t.classList.contains("del"))
+  return;
+    
+    const id = t.dataset.id;
+    let habits = loadHabits();
+    const victim = habits.find(h => h.id === id);
+ 
+  
+  // if deleting a completed quest, remove the XP it granted
+     if(victim?.done){
+       save(Math.max(0, loadXP() - 10));
+       updateXPUI();
+     }
+     
+     habits = habits.filter(h => h.id !== id);
+     saveHabits(habits);
+     render();   
+});   
+
+completeAllBtn.addEventListener("click", ()=>{
+  const habits = loadHabits();
+  let xp = loadHabits.forEach(h => {
+    if(!h.done){ //only grant XP once h.done = true;
+    xp += 10;
+  }
+});
+  saveHabits(habits);
+  saveXP(xp);
+  updateXPUI();
+  render();
+});
+
+resetDayBtn.addEventListener("click", ()=>{
+  const habits = loadHabits().map(h => ({...h, done:false}));
+  saveHabits(habits);
+  render();
+});
+
+updateXPUI();
+render();
+
+
