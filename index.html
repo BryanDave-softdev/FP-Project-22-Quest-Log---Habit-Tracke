@@ -1,0 +1,58 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>Quest Log - Habit Tracker</title>
+  <link rel="stylesheet" href="style.css"/>
+</head>
+<body>
+  <main class="container">
+    <header class="header">
+      <h1>🗡 Quest Log</h1>
+      <p id="today"></p>
+    </header>
+    
+    <section class="card">
+      <h2>Add Daily Quest</h2>
+      <form id="habitForm" autocomplete="off">
+        <input id="habitInput" type="text" placeholder="e.g.. 30 min Coding" required />
+        <button id="addHabitBtn" type="submit">Add</button>
+      </form>
+      <small>Tip: Keep habits small and clear.</small>
+      
+    <section class="card">
+     <h2>Today's Quest</h2>
+     <ul id="habitList"</ul>
+    
+     <div class="row">
+       <button id="completeAllBtn" type="button">Complete All</button>
+       <button id="resetDayBtn" class="ghost" type="button">Reset Day</button>
+     </div>
+   </section>
+      
+   <section class="card">
+     <h2>Level & XP</h2>
+     <div class="stats">
+       <div><span>Total XP:</span><strong id="xpTotal">0</strong></div>
+       <div><span>Level:</span> <strong id="level">1</strong></div>
+     </div>
+     <div class="bar">
+       <div id="xpBar" style="width: 0%"></div>
+     </div>
+     <small>+10 XP per completed quest • Level up every 100 XP</small>
+   </section>
+     
+   <section class="card">
+     <h2>Summary</h2>
+     <p id="dailySummary">No quests completed yet.</p>
+   </section>
+      
+   <footer class="footer">
+     <small>Made by Bryan Dave • Project 22</small>
+   </footer>
+  </main>
+    
+  <script src="app.js"></script>
+</body>
+</html>
